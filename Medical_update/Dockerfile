@@ -1,0 +1,9 @@
+
+FROM golang:1.21
+WORKDIR /app
+COPY go.mod ./
+RUN go mod download
+COPY . .
+RUN go build -o main ./cmd/main.go
+EXPOSE 4001
+CMD ["./main"]
