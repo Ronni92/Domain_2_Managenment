@@ -5,7 +5,7 @@ FROM golang:1.21
 WORKDIR /app
 
 # Copiar go.mod y descargar dependencias
-COPY go.mod ./
+COPY go.mod go.sum ./
 RUN go mod download
 
 # Copiar el resto del código fuente
