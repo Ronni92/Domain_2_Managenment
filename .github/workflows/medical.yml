@@ -1,0 +1,37 @@
+name: Medical Update Microservice
+
+on:
+  push:
+    paths:
+      - 'medical-update/**'
+    branches:
+      - Test # o tu rama de trabajo
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/medical-update-service ./medical-update
+
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/medical-update-service
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST_MEDICAL_UPDATE }}
+          username: ${{ secrets.EC2_USER_MEDICAL_UPDATE }}
+          key: ${{ secrets.EC2_KEY_MEDICAL_UPDATE }}
+          script: |
+            sudo docker stop medical-update || true
+            sudo docker rm medical-update || true
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/medical-update-service
+            sudo docker run -d --name medical-update -p 3005:3005 ${{ secrets.DOCKER_USERNAME }}/medical-update-service
