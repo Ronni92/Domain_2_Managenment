@@ -5,7 +5,6 @@ on:
       - 'medical-update/**'
     branches:
       - Test # o tu rama de trabajo
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest

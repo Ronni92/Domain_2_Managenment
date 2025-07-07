@@ -1,12 +1,10 @@
 name: Register Pet Microservice
-
 on:
   push:
     paths:
       - 'register-pet/**'
     branches:
       - Test  # o tu rama de trabajo
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
